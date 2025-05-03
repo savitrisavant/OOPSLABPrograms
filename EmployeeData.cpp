@@ -1,0 +1,99 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+struct Employee {
+    int id;
+    string name;
+    string department;
+    double salary;
+};
+
+void displayMenu() {
+    cout << "Employee Data File Menu" << endl;
+    cout << "1. Create Employee Data File" << endl;
+    cout << "2. Append Record to Employee Data File" << endl;
+    cout << "3. Display Employee Records" << endl;
+    cout << "4. Exit" << endl;
+}
+
+void createEmployeeDataFile() {
+    ofstream outFile("employee.dat", ios::binary);
+    if (!outFile) {
+        cout << "Error creating employee data file!" << endl;
+        return;
+    }
+    cout << "Employee data file created successfully!" << endl;
+    outFile.close();
+}
+
+void appendRecordToEmployeeDataFile() {
+    ofstream outFile("employee.dat", ios::binary | ios::app);
+    if (!outFile) {
+        cout << "Error appending record to employee data file!" << endl;
+        return;
+    }
+
+    Employee emp;
+    cout << "Enter employee ID: ";
+    cin >> emp.id;
+    cout << "Enter employee name: ";
+    cin.ignore();
+    getline(cin, emp.name);
+    cout << "Enter employee department: ";
+    getline(cin, emp.department);
+    cout << "Enter employee salary: ";
+    cin >> emp.salary;
+
+    outFile.write((char*)&emp, sizeof(Employee));
+    cout << "Record appended to employee data file successfully!" << endl;
+    outFile.close();
+}
+
+void displayEmployeeRecords() {
+    ifstream inFile("employee.dat", ios::binary);
+    if (!inFile) {
+        cout << "Error reading employee data file!" << endl;
+        return;
+    }
+
+    Employee emp;
+    while (inFile.read((char*)&emp, sizeof(Employee))) {
+        cout << "Employee ID: " << emp.id << endl;
+        cout << "Employee Name: " << emp.name << endl;
+        cout << "Employee Department: " << emp.department << endl;
+        cout << "Employee Salary: " << emp.salary << endl;
+        cout << endl;
+    }
+    inFile.close();
+}
+
+int main() {
+    int choice;
+    do {
+        displayMenu();
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                createEmployeeDataFile();
+                break;
+            case 2:
+                appendRecordToEmployeeDataFile();
+                break;
+            case 3:
+                displayEmployeeRecords();
+                break;
+            case 4:
+                cout << "Exiting program. Goodbye!" << endl;
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+        }
+    } while (choice != 4);
+
+    return 0;
+}
